@@ -1,7 +1,10 @@
 # About Rich Chinese Bible
 
-Rich Chinese Bible is a Moble app created by React Native. <br/>
-Google Play link: https://play.google.com/store/apps/details?id=com.chinesebible
+Rich Chinese Bible is a Moble app created by React Native, Redux, Android and iOS technologies. <br/>
+
+## Project details
+
+**Google Play link:** https://play.google.com/store/apps/details?id=com.chinesebible
 
 ## Environment setting
 
