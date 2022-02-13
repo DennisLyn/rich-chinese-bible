@@ -1,6 +1,7 @@
 # About Rich Chinese Bible
 
-Rich Chinese Bible is a Moble app created by React Native, Redux, Android and iOS technologies. <br/>
+Rich Chinese Bible is a Moble app created by React Native, Redux, Android, and iOS technologies. <br/>
+It allows you to read the bible on your phone or devices without bringing a real book! Furthermore, it provides some advanced features such as bookmark, sharing verse, search keyword, and so on! you can use its search feature to find the content in the bible! Hope you enjoy this app. :)
 
 ## Project details
 
@@ -11,7 +12,7 @@ Rich Chinese Bible is a Moble app created by React Native, Redux, Android and iO
 2. `Bookmark/Favorite`: note down your reading trace. Add your favorite verses.
 3. `Social sharing`: share selected verse through social apps on your device like Facebook, Messenger, Email, WeChat, Line, Email and etc.
 4. `Cope verse`: copy selected verse to clipboard.
-5. `Keyword search`: search for key words. The searching keyword will be highlighted in yellow. All search histories will be saved on local.
+5. `Keyword search`: search for key words. The searching keyword will be highlighted in yellow. All **search histories** will be saved on local.
 
 ## Environment setting
 
