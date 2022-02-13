@@ -9,7 +9,7 @@ class NavigationDrawer extends Component {
     return (
       <Drawer
         ref='navigation'
-        type='overlay' //displace:overlay:static
+        type='overlay'
         onOpen={()=>Actions.refresh({key:state.key, open: true})}
         onClose={()=>Actions.refresh({key:state.key, open: false})}
         open={state.open}
@@ -35,10 +35,8 @@ class NavigationDrawer extends Component {
 
 const drawerStyles = {
   drawer: {
-    shadowColor:'#000', 
-    shadowOpacity: 0.3, 
-    // backgroundColor: '#fff',
-    // backgroundColor: '#999',
+    shadowColor:'#000',
+    shadowOpacity: 0.3,
     opacity: 0.98
   }
 }

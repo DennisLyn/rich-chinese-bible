@@ -1,16 +1,12 @@
 import React, { Component} from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  TouchableOpacity,
-  Dimensions,
-  ActivityIndicator
+import {
+  View,
+  StyleSheet,
 } from 'react-native';
 import { connect } from 'react-redux';
 import CustomSpinner from './common/CustomSpinner'
 
-class ScreenBlocker extends Component { 
+class ScreenBlocker extends Component {
   constructor(props) {
     super(props);
   }
@@ -24,14 +20,14 @@ class ScreenBlocker extends Component {
 
 const styles = StyleSheet.create({
   screenContainer: {
-    alignItems: "center", 
-    justifyContent: "center", 
-    position: 'absolute', 
-    top: 0, 
-    left: 0, 
-    width: '100%', 
-    height:'100%', 
-    backgroundColor:'#fff', 
+    alignItems: "center",
+    justifyContent: "center",
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height:'100%',
+    backgroundColor:'#fff',
     opacity: 0.5
   }
 });

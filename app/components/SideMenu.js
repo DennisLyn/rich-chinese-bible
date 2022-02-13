@@ -1,36 +1,29 @@
 import React, { Component} from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  Image,
-  Dimensions,
+import {
+  View,
+  Text,
+  StyleSheet,
   TouchableOpacity,
   ScrollView
 } from 'react-native';
-const { width, height } = Dimensions.get('window');
-import { Actions, ActionConst } from 'react-native-router-flux';
+import { Actions } from 'react-native-router-flux';
 import { connect } from 'react-redux';
 import ProgressiveImage from "./common/ProgressiveImage";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const bookImg = require("../img/book.png");
-const heartImg = require("../img/heart.png");
-const bookMarkImg = require("../img/bookmark.png");
-const aboutImg = require("../img/about.png");
 const bayrimLogo = require("../img/nav-logo.png");
 const appLogo = require("../img/cbible_blue_small.jpg");
 const packageJson = require('../../package.json');
 const appVersion = packageJson.version;
 
 
-class SideMenu extends Component { 
+class SideMenu extends Component {
   constructor(props){
     super(props);
     this.closeDrawer = this.closeDrawer.bind(this);
     this.goToPage = this.goToPage.bind(this);
   }
-  
+
   closeDrawer() {
     Actions.refresh({key: 'drawer', open: false });
   };
@@ -46,18 +39,16 @@ class SideMenu extends Component {
       window.setTimeout(()=>{
         Actions.resetpage();
         window.setTimeout(Actions[page], 280);
-      }); 
+      });
     }
   }
 
   render() {
-    const { userData, closeDrawer } = this.props;
     return (
      <View style={styles.container}>
      <ScrollView style={{width:'100%', height:'100%'}}>
       <View style={styles.headerBlock}></View>
       <View style={styles.infoBlock}>
-        {/*<Text style={styles.menuTitle}>聖經</Text>*/}
         <ProgressiveImage style={styles.appLogo} source={appLogo} />
         <View>
           <Text style={styles.menuSubTitle}>和合本</Text>
@@ -94,7 +85,6 @@ class SideMenu extends Component {
           <Text style={[styles.menuItem]}>關於我們</Text>
           <View style={[styles.menuItemIconBlock, {backgroundColor:'#fff'}]}>
             <ProgressiveImage style={styles.bayrimLogo} source={bayrimLogo} />
-            {/*<Icon style={{}} name="information" size={30} color="#3676B8"/>*/}
           </View>
         </TouchableOpacity>
         <View style={styles.menuFooter}></View>
@@ -112,7 +102,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     height: '100%',
-    // backgroundColor: '#fff',
     backgroundColor: '#3676B8',
     opacity: 1,
     paddingHorizontal: 25
@@ -178,14 +167,14 @@ const styles = StyleSheet.create({
 
   },
   menuItemIconBlock: {
-    borderRadius:50, 
+    borderRadius:50,
     marginTop:30,
-    backgroundColor:'#ECC809', 
-    paddingHorizontal:5, 
-    paddingVertical:5, 
-    width:50, 
-    height:50, 
-    justifyContent:'center', 
+    backgroundColor:'#ECC809',
+    paddingHorizontal:5,
+    paddingVertical:5,
+    width:50,
+    height:50,
+    justifyContent:'center',
     alignItems:'center'
   },
   menuItemIcon: {
@@ -216,7 +205,7 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapStateToProps = (state) => {    
+const mapStateToProps = (state) => {
   return {};
 };
 

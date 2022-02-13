@@ -17,7 +17,7 @@ export const NavigationBarStyle = {
   height: (Platform.OS == "android") ? 55 : 65
 };
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 const navMenuIconsBlockWith = 30;
 const navBarRightBlockWith = 130;
 const pagePaddingHorizontal = 20;
@@ -44,14 +44,14 @@ class NavigationBar extends Component {
           (props && props.back)? (
             <TouchableOpacity style={styles.menuIconsBlock} onPress={(props.backOnPress)? (props.backOnPress)
             :
-              ()=>{ 
+              ()=>{
                 Actions.pop()}
               }
             >
               {
                 (props.backIconSource)? (<Image style={{width:20, height:20, resizeMode: 'contain'}} source={props.backIconSource}></Image>)
                 : <Icon style={{}} name="arrow-left" size={30} color="#000"/>
-              }  
+              }
             </TouchableOpacity>
           ): null
         }
@@ -76,14 +76,14 @@ class NavigationBar extends Component {
 const styles = StyleSheet.create({
   navBarContainer: {
     backgroundColor: 'rgba(255, 255, 255, 0.7)',
-    flexDirection: 'row', 
-    position: 'absolute', 
+    flexDirection: 'row',
+    position: 'absolute',
     left: 0,
-    top: 0, 
-    flex: 1, 
-    paddingHorizontal: 0, 
-    paddingVertical: 0, 
-    justifyContent: 'space-between', 
+    top: 0,
+    flex: 1,
+    paddingHorizontal: 0,
+    paddingVertical: 0,
+    justifyContent: 'space-between',
     alignItems: 'center',
     height: NavigationBarStyle.height,
     width: '100%',
@@ -99,38 +99,37 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   menu_burger: {
-    width:18, 
-    height:18, 
+    width:18,
+    height:18,
     resizeMode: 'contain',
     marginRight: 0
   },
   backBtn: {
-    width:20, 
-    height:20, 
+    width:20,
+    height:20,
     resizeMode: 'contain',
     marginRight: 25
   },
   menuIconsBlock: {
-    backgroundColor: 'transparent', 
+    backgroundColor: 'transparent',
     justifyContent: 'center',
     alignItems: 'center',
     width: navMenuIconsBlockWith,
-    // backgroundColor: 'yellow'
   },
   navBarTitleBlock: {
-    backgroundColor: 'transparent', 
+    backgroundColor: 'transparent',
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%'
   },
   navTitle: {
     textAlign:'center',
-    color: '#000', 
+    color: '#000',
     fontSize: 18,
     marginLeft: -60
   },
   navBarTitleBlockWithRightBlock: {
-    backgroundColor: 'transparent', 
+    backgroundColor: 'transparent',
     justifyContent: 'center',
     alignItems: 'center',
     width: width - navMenuIconsBlockWith - navBarRightBlockWith - (2 * pagePaddingHorizontal)

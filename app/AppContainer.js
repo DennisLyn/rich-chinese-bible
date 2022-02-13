@@ -2,13 +2,11 @@
 if(!__DEV__){
     let consoleMethods = ["log"];
     for(let i = 0; i < consoleMethods.length; i++){
-        console[consoleMethods[i]] = function() {};                
+        console[consoleMethods[i]] = function() {};
     }
 }
 
-import React, { Component } from 'react';
-import Router from './Router';
-import { connect } from 'react-redux';
+import React from 'react';
 import { Provider } from 'react-redux';
 import App from './App';
 import {createStore, applyMiddleware} from 'redux';

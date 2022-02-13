@@ -1,9 +1,7 @@
 import React, { Component } from "react";
 import { connect } from 'react-redux';
-import {Platform, StyleSheet, View, Text, BackHandler } from "react-native";
-import { Scene, Router, Actions, Drawer, Reducer, ActionConst, Stack } from "react-native-router-flux";
+import { Scene, Router, Reducer } from "react-native-router-flux";
 import Landing from './components/Landing';
-import SideMenu from './components/SideMenu';
 import Books from './components/Books';
 import Favorites from './components/Favorites';
 import AboutUs from './components/AboutUs';
@@ -21,10 +19,8 @@ class RouterComponent extends Component {
   }
 
   reducerCreate(params) {
-    let {router, updateCurrentScene} = this.props;
     const defaultReducer = new Reducer(params);
     return (state, action) => {
-      // console.log("router action type: " + JSON.stringify(action.type));
       return defaultReducer(state, action);
     };
   }
@@ -43,7 +39,7 @@ class RouterComponent extends Component {
             <Scene key='search' component={Search}/>
             <Scene key='resetpage' type='reset' component={ResetPage}/>
             {/*Test page*/}
-            <Scene key='webviewtest' component={WebViewTest}/> 
+            <Scene key='webviewtest' component={WebViewTest}/>
           </Scene>
         </Scene>
       </Router>
@@ -60,4 +56,3 @@ function mapDispatchToProps (dispatch) {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(RouterComponent);
-

@@ -1,16 +1,11 @@
 import React, { Component } from 'react';
-import { 
-  ListView, 
-  View, 
-  Text, 
-  TouchableHighlight, 
-  StyleSheet, 
-  Image,
-  Dimensions,
+import {
+  View,
+  StyleSheet,
   WebView
 } from 'react-native';
 
-class WebViewTest extends Component { 
+class WebViewTest extends Component {
   render() {
     let testUrl= 'https://www.samsung.com/us/m';
     return (

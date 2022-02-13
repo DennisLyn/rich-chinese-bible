@@ -1,29 +1,24 @@
-import React, { Component, PureComponent } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  Image,
-  Dimensions,
+import React, { PureComponent } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
   Picker,
-  ActivityIndicator,
   ScrollView,
   TouchableOpacity,
   Platform,
   InteractionManager
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
-import ProgressiveImage from "./common/ProgressiveImage";
 import { connect } from 'react-redux';
 import NavigationBar, { NavigationBarStyle } from './NavigationBar';
 import CustomSpinner from './common/CustomSpinner'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const logoIcon = require("../img/Icon-xxxhdpi.png");
 const stickyBtnHeight = 50;
 const headerHeight = NavigationBarStyle.height;
 
-class PickBookChapter extends PureComponent { 
+class PickBookChapter extends PureComponent {
   constructor(props){
     super(props);
     this.state={
@@ -33,7 +28,7 @@ class PickBookChapter extends PureComponent {
       selectedBookChaptersNum: null,
       selectedChapter:null,
       selectedChapterSections: null,
-      selectedSectionIndex: null, 
+      selectedSectionIndex: null,
       fromPage: this.props.from,
       renderPlaceholderOnly: true
     };
@@ -45,11 +40,11 @@ class PickBookChapter extends PureComponent {
   }
 
   componentWillMount() {}
-  
+
   componentDidMount() {
     let {from} = this.props;
     let navBar = this.renderNavBarWithBack;
-    
+
     if(from=='sideMenu') {
       navBar=this.renderNavBarWithOutBack;
     }
@@ -58,9 +53,9 @@ class PickBookChapter extends PureComponent {
       hideNavBar: false,
       navBar: navBar,
     };
-    
+
     Actions.refresh(navBarConfig);
-    
+
     let { bible, books, selectedBookIndex, selectedChapter, selectedSection } = this.props;
     let chapterName = selectedChapter? `第 ${selectedChapter} 章` : '第 1 章';
     let bookChapterNum = (selectedBookIndex)? books.data[selectedBookIndex].chapterNum: books.data[0].chapterNum;
@@ -70,7 +65,7 @@ class PickBookChapter extends PureComponent {
     let sectionIndex = selectedSection? selectedSection: 0;
 
     InteractionManager.runAfterInteractions(() => {
-      this.setState({ 
+      this.setState({
         booksData: books.data,
         bibleData: bible.data,
         selectedBookChaptersNum: bookChapterNum,
@@ -117,7 +112,7 @@ class PickBookChapter extends PureComponent {
   }
 
   onChapterChange(chapter) {
-    let { booksData, bibleData, selectedBookIndex } = this.state; 
+    let { booksData, bibleData, selectedBookIndex } = this.state;
     let chapterName = `第 ${chapter} 章`;
     this.setState({
       selectedChapter: chapter,
@@ -135,8 +130,8 @@ class PickBookChapter extends PureComponent {
   render() {
     let {renderPlaceholderOnly, bibleData, booksData, selectedBookChaptersNum, selectedBookIndex, selectedChapter, selectedChapterSections, selectedSectionIndex, fromPage } = this.state;
     let scrollToIndex = selectedSectionIndex;
-  
-    if (renderPlaceholderOnly || 
+
+    if (renderPlaceholderOnly ||
         bibleData== null||
         booksData.length==0) {
       return (
@@ -144,7 +139,7 @@ class PickBookChapter extends PureComponent {
       );
     }
 
-    let bookPickerList = booksData.map((item, index) => 
+    let bookPickerList = booksData.map((item, index) =>
       <Picker.Item label={item.name} value={index} key={`bookPickItem_${index}`}/>
     );
 
@@ -157,7 +152,7 @@ class PickBookChapter extends PureComponent {
     for(let index=0; index < selectedChapterSections; index++) {
       sectionPickerList.push(<Picker.Item label={`${index+1}`} value={`${index}`} key={`sectionPickItem_${index}`}/>);
     }
-    
+
     return (
       <View style={styles.container}>
         <ScrollView  style={{width:'100%', height:'100%'}}>
@@ -201,12 +196,10 @@ class PickBookChapter extends PureComponent {
               }}>
                 <Icon style={{marginRight:5}} name="coffee-to-go" size={25} color="#fff"/>
                 <Text style = {styles.goToBtnText}>前往章節</Text>
-                
+
               </TouchableOpacity>
             ) : (
               <TouchableOpacity style={styles.goToBtn} onPress = {()=>{
-                // Actions.chapters({bookIndex: selectedBookIndex, book: booksData[selectedBookIndex].name, chapter: selectedChapter, type: 'replace', scrollToIndex: scrollToIndex});
-                // Actions.chapters({bookIndex: selectedBookIndex, book: booksData[selectedBookIndex].name, chapter: selectedChapter, scrollToIndex: scrollToIndex});
                 try{
                   Actions.popTo('chapters');
                   setTimeout(()=>{
@@ -217,8 +210,7 @@ class PickBookChapter extends PureComponent {
                 }
               }}>
                 <Icon style={{marginRight:5}} name="coffee-to-go" size={25} color="#fff"/>
-                <Text style = {styles.goToBtnText}>前往章節</Text> 
-                
+                <Text style = {styles.goToBtnText}>前往章節</Text>
               </TouchableOpacity>
             )
           }
@@ -281,37 +273,37 @@ const styles = StyleSheet.create({
     textAlign: 'right'
   },
   stickyFooterBlock: {
-    backgroundColor: '#3676B8', 
-    position: "absolute", 
+    backgroundColor: '#3676B8',
+    position: "absolute",
     left: 0,
-    bottom: 0, 
-    flex: 1, 
-    paddingHorizontal: 0, 
-    paddingVertical: 0, 
-    justifyContent: "center", 
+    bottom: 0,
+    flex: 1,
+    paddingHorizontal: 0,
+    paddingVertical: 0,
+    justifyContent: "center",
     alignItems: "center",
     height: stickyBtnHeight,
     width: "100%",
     opacity: 1,
   },
   stickyFooterButtonBlock: {
-    justifyContent: "center", 
+    justifyContent: "center",
     alignItems: "center",
     width: '100%',
     height: '100%',
     flex: 0.5
   },
   stickyFooterButton: {
-    height: '100%', 
-    width: '100%', 
-    justifyContent: "center", 
+    height: '100%',
+    width: '100%',
+    justifyContent: "center",
     alignItems: "center",
     flexDirection: 'row',
     paddingHorizontal: 25
   },
   stickyFooterButtonTxt: {
-    color: "#FFF", 
-    fontSize: 12, 
+    color: "#FFF",
+    fontSize: 12,
     textAlign:'center'
   }
 });
@@ -322,10 +314,9 @@ const mapStateToProps = (state) => {
       bible: state.bible
     };
   };
-  
+
   function mapDispatchToProps (dispatch) {
     return {};
   }
-  
+
   export default connect(mapStateToProps, mapDispatchToProps)(PickBookChapter);
-  

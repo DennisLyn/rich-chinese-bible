@@ -3,7 +3,7 @@ import * as TYPES from "../actions/types.js";
 const initialState = {
   isUnmounting: false
 };
-  
+
 export default function RouterReducer (state = initialState, action) {
   console.log(action.type);
   switch (action.type) {
@@ -17,7 +17,7 @@ export default function RouterReducer (state = initialState, action) {
         ...state,
         isUnmounting: true
       };
-    case TYPES.UPDATE_UNMOUNT_STATE: 
+    case TYPES.UPDATE_UNMOUNT_STATE:
       return {
         ...state,
         isUnmounting: action.payload

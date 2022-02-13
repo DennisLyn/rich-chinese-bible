@@ -4,10 +4,10 @@ import {AsyncStorage} from 'react-native';
 const favoritesAsyncKey = 'cbible_favorites';
 
 export function getFavoritesData() {
-    return {
-      type: TYPES.FETCHING_FAVORITES_DATA,
-      payload: null,
-    };
+  return {
+    type: TYPES.FETCHING_FAVORITES_DATA,
+    payload: null,
+  };
 }
 
 export function getFavoritesSuccess(data) {
@@ -27,7 +27,6 @@ export function getFavoritesFailure() {
 export function fetchFavoritesData() {
   return async (dispatch)=>{
     dispatch(getFavoritesData());
-    // get Favorites from AsyncStorage
     try {
       // For debugging
       // AsyncStorage.removeItem(favoritesAsyncKey);
@@ -38,13 +37,9 @@ export function fetchFavoritesData() {
        *  dataString - data
        */
       let cBibleFavorites = await AsyncStorage.getItem(favoritesAsyncKey);
-      // console.log('Get favorites from AsyncStorage:' + cBibleFavorites);
-      
       let favoritesJsonData = JSON.parse(cBibleFavorites);
       dispatch(getFavoritesSuccess(favoritesJsonData));
-      
     } catch(err){
-      // console.log('Error: ' + err);
       dispatch(getFavoritesFailure());
     }
   }
@@ -62,7 +57,6 @@ export function removeFavorite(selected) {
         AsyncStorage.removeItem(favoritesAsyncKey, ()=> {
           AsyncStorage.setItem(favoritesAsyncKey, JSON.stringify(newFavorite), () => {
             AsyncStorage.getItem(favoritesAsyncKey, (err, result) => {
-              console.log('removeFavorite: (result):' + result);
               dispatch(getFavoritesSuccess(newFavorite));
             });
           });
@@ -82,14 +76,12 @@ export function addFavorite(selected) {
       if (favorites) {
         AsyncStorage.mergeItem(favoritesAsyncKey, JSON.stringify(selected), () => {
           AsyncStorage.getItem(favoritesAsyncKey, (err, result) => {
-            console.log('addFavorite (result):' + result);
             dispatch(getFavoritesSuccess(JSON.parse(result)));
           });
         });
       } else {
         AsyncStorage.setItem(favoritesAsyncKey, JSON.stringify(selected), () => {
           AsyncStorage.getItem(favoritesAsyncKey, (err, result) => {
-            console.log('addFavorite (result):' + result);
             dispatch(getFavoritesSuccess(JSON.parse(result)));
           });
         });
@@ -99,4 +91,3 @@ export function addFavorite(selected) {
     }
   }
 }
-

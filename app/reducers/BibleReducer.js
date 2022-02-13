@@ -34,3 +34,4 @@ export default function BibleReducer (state = initialState, action) {
       return state;
   }
 }
+

@@ -1,15 +1,10 @@
-import React, { Component, PureComponent } from 'react';
-import { 
-  ListView, 
-  View, 
-  Text, 
-  TouchableHighlight, 
-  StyleSheet, 
-  Image,
-  Dimensions,
+import React, { PureComponent } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
   FlatList,
   InteractionManager,
-  AsyncStorage,
   TouchableOpacity,
   Clipboard,
   ScrollView
@@ -19,18 +14,14 @@ import NavigationBar, { NavigationBarStyle } from './NavigationBar';
 import { Actions } from 'react-native-router-flux';
 import { connect } from 'react-redux';
 import CustomSpinner from './common/CustomSpinner'
-import ProgressiveImage from "./common/ProgressiveImage";
 import Modal from "react-native-modal";
 import Share, {ShareSheet, Button} from 'react-native-share';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const sectionMenu = require("../img/menu-vertical.png");
-const heartOutline = require("../img/heart-outline.png");
-const closeIcon = require("../img/icon-close.png");
 const stickyBtnHeight = 10;
 const headerHeight = NavigationBarStyle.height;
 
-class Favorites extends PureComponent { 
+class Favorites extends PureComponent {
   constructor(props){
     super(props);
     this.state = {
@@ -61,8 +52,6 @@ class Favorites extends PureComponent {
     InteractionManager.runAfterInteractions(() => {
       this.setState({
         renderPlaceholderOnly: false,
-      },()=>{
-        // this.shareContent();
       });
     });
   }
@@ -72,8 +61,6 @@ class Favorites extends PureComponent {
     this.setState({
       favorites: favorites.data,
       isFetching : favorites.isFetching
-    }, ()=>{
-      console.log('nextProps: ' + JSON.stringify(nextProps));
     });
   }
 
@@ -87,9 +74,8 @@ class Favorites extends PureComponent {
 
   renderNavBar() {
     return (
-      <NavigationBar 
+      <NavigationBar
         menu={true}
-        // back={true}
         title="我的收藏"
       />
     );
@@ -100,9 +86,7 @@ class Favorites extends PureComponent {
     this.openModal();
     let selected = {};
     selected[key]= favorites[key];
-    this.setState({selected: selected}, ()=>{
-      // console.log('this.state.selected: ' + JSON.stringify(this.state.selected));
-    });
+    this.setState({selected: selected});
   }
 
   openModal() {
@@ -126,7 +110,6 @@ class Favorites extends PureComponent {
       let selectedDetails = selected[Object.keys(selected)[0]];
       content = `${selectedDetails.book} ${selectedDetails.chapterName} 第 ${selectedDetails.index+1} 節 : ${selectedDetails.content}`;
     }
-    // console.log('copy content: ' + content);
     Clipboard.setString(content);
   }
 
@@ -137,21 +120,20 @@ class Favorites extends PureComponent {
       let selectedDetails = selected[Object.keys(selected)[0]];
       let bookChapter = selectedDetails.chapterName.replace(/第|章| /g, '');
       content = `${selectedDetails.book} ${selectedDetails.chapterName} 第 ${selectedDetails.index+1} 節 : ${selectedDetails.content}`;
-      
+
       let options = {
         title: '聖經-經節分享',
         message: content,
-        // url: 'http://god.is-very-good.org/BibleMobile.php?BookName='+encodeURIComponent(selectedDetails.book)+'&BookChapter='+bookChapter,
         subject: '聖經-經節分享'
       };
-  
+
       Share.open(options)
-      .then((res) => { 
-        console.log(res);
+      .then((res) => {
         this.closeModal();
       })
-      .catch((err) => { 
-        console.log(err); 
+      .catch((err) => {
+        // For debugging
+        console.log(err);
       });
     }
   }
@@ -161,15 +143,14 @@ class Favorites extends PureComponent {
     let selectedDetails = selected[Object.keys(selected)[0]];
     Actions.chapters({
       fromPage: 'favorites',
-      bookIndex: selectedDetails.bookIndex, 
-      book: selectedDetails.book, 
+      bookIndex: selectedDetails.bookIndex,
+      book: selectedDetails.book,
       chapter: selectedDetails.chapterName.replace(/第|章| /g, ''),
       scrollToIndex: selectedDetails.index
     })
   }
 
   renderList({item, index}) {
-    // console.log(index + ':' + item);
     let { favorites } = this.state;
     return (
       <TouchableOpacity key={`favorite_${index}`} onPress={()=>{this.onPressListItem(item);}}>
@@ -193,16 +174,13 @@ class Favorites extends PureComponent {
   render() {
     let { favorites, renderPlaceholderOnly, selected, isFetching} = this.state;
     let selectedDetails = (selected)? selected[Object.keys(selected)[0]]: null;
-    
+
     if (renderPlaceholderOnly || isFetching) {
       return (
         <CustomSpinner />
       );
-    } else {
-      // console.log('Object.keys(favorites)' + JSON.stringify(Object.keys(favorites)));
-      // console.log('this.state.favorites: ' + JSON.stringify(this.state.favorites));
     }
-   
+
     return (
      <View style={styles.container}>
       {
@@ -210,7 +188,7 @@ class Favorites extends PureComponent {
           <Text style={styles.sectionText}>還沒有最愛經節</Text>
         ):(
           <FlatList
-            ref='pageList' 
+            ref='pageList'
             style={{width:'100%', height:'100%'}}
             data={Object.keys(favorites)}
             extraData={this.state}
@@ -221,7 +199,7 @@ class Favorites extends PureComponent {
               <View style={{backgroundColor: '#fff', height:5}}></View>
             )}
             keyExtractor={(item, index) => {item}}
-        /> 
+        />
         )
       }
       <Modal
@@ -340,7 +318,7 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     margin: 0,
-    justifyContent: "center", 
+    justifyContent: "center",
     alignItems: "center",
   },
   innerContainer: {
@@ -357,7 +335,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 20,
     right: 20,
-    justifyContent: "center", 
+    justifyContent: "center",
     alignItems: "center",
   },
   closeIcon: {
@@ -380,7 +358,7 @@ const styles = StyleSheet.create({
     width: 200,
     height: 50,
     backgroundColor: '#3676B8',
-    justifyContent: "center", 
+    justifyContent: "center",
     alignItems: "center",
     padding: 10
   },

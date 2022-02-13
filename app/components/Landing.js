@@ -1,12 +1,8 @@
-import React, { Component, PureComponent } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  Image,
-  Dimensions,
+import React, { PureComponent } from 'react';
+import {
+  View,
+  StyleSheet,
   Animated,
-  ActivityIndicator
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import { fetchBibleData, fetchBooksData, fetchSearchData } from '../actions';
@@ -15,17 +11,17 @@ import ProgressiveImage from "./common/ProgressiveImage";
 var Spinner = require('react-native-spinkit');
 const logoIcon = require("../img/cbible_blue_small.jpg");
 
-class Landing extends PureComponent { 
+class Landing extends PureComponent {
   constructor(props){
     super(props);
     this.state = {
-      appImg_fade: new Animated.Value(0) 
+      appImg_fade: new Animated.Value(0)
     }
   }
 
   componentWillMount() {}
-  
-  componentDidMount() { 
+
+  componentDidMount() {
     Animated.timing(
       this.state.appImg_fade,
       {
@@ -39,9 +35,8 @@ class Landing extends PureComponent {
         {
           delay: 1000,
         }
-      ).start(()=>{ 
+      ).start(()=>{
         Actions.books();
-        // Actions.search();  
       });
     });
   }

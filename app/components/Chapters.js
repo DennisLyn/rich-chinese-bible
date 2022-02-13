@@ -1,55 +1,37 @@
-import React, { Component, PureComponent } from 'react';
-import { 
-  ListView, 
-  View, 
-  Text, 
-  TouchableHighlight, 
-  StyleSheet, 
-  Image,
+import React, { PureComponent } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
   Dimensions,
-  ActivityIndicator,
   FlatList,
   ScrollView,
   TouchableOpacity,
-  AsyncStorage,
   Clipboard,
-  Platform,
   InteractionManager,
-  onLayout
 } from 'react-native';
 import NavigationBar, { NavigationBarStyle } from './NavigationBar';
 import { Actions } from 'react-native-router-flux';
-import { fetchBooksData, fetchFavoritesData, removeFavorite, addFavorite } from '../actions';
+import { fetchFavoritesData, removeFavorite, addFavorite } from '../actions';
 import { connect } from 'react-redux';
-import ProgressiveImage from "./common/ProgressiveImage";
 import Modal from "react-native-modal";
 import CustomSpinner from './common/CustomSpinner'
-import Share, {ShareSheet, Button} from 'react-native-share';
+import Share from 'react-native-share';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-const { width, height } = Dimensions.get('window');
+
 const headerHeight = NavigationBarStyle.height;
 const stickyBtnHeight = 40;
-const goToIcon = require("../img/check.png");
-const searchIcon = require("../img/search.png");
-const sectionMenu = require("../img/menu-vertical.png");
-const heartIcon = require("../img/heartIcon.png");
-const copyIcon = require("../img/copy.png");
-const closeIcon = require("../img/icon-close.png");
 const listSeparatorHeight = 5;
-
 
 // Reset this when FlatList is re-rendered
 let scrollToOffsetY = 0;
 
-class Chapters extends PureComponent { 
+class Chapters extends PureComponent {
   constructor(props){
     super(props);
     this.state = {
       bibleData: null,
       booksData: [],
-      /*bookIndex: this.props.bookIndex,
-      book: this.props.book,
-      chapter: this.props.chapter,*/
       bookIndex: null,
       book: null,
       chapter: null,
@@ -57,8 +39,7 @@ class Chapters extends PureComponent {
       listData: null,
       modalVisible: false,
       favorites: null,
-      renderPlaceholderOnly: true, 
-      // scrollToIndex: null
+      renderPlaceholderOnly: true,
       scrollToIndex: 0
     };
     this.renderNavBar = this.renderNavBar.bind(this);
@@ -79,7 +60,7 @@ class Chapters extends PureComponent {
   }
 
   componentWillMount() {}
-  
+
   componentWillUnmount() {
     scrollToOffsetY=0;
   }
@@ -87,16 +68,16 @@ class Chapters extends PureComponent {
   componentDidMount() {
     let { fetchFavoritesData, bookIndex, book, chapter, scrollToIndex, favorites, bible, books } = this.props;
     let chapterName = `第 ${chapter} 章`;
-    
+
     fetchFavoritesData();
 
     InteractionManager.runAfterInteractions(() => {
       this.setState({
-        bookIndex: bookIndex, 
-        book: book, 
+        bookIndex: bookIndex,
+        book: book,
         chapter:chapter,
         favorites: favorites.data,
-        listData: bible.data[book][chapterName], 
+        listData: bible.data[book][chapterName],
         scrollToIndex: scrollToIndex,
         booksData: books.data,
         bibleData: bible.data
@@ -114,28 +95,26 @@ class Chapters extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    // console.log("chapter nextProps.scrollToIndex: " + JSON.stringify(nextProps.scrollToIndex));
     let { bible } = this.props;
     let favorites = nextProps.favorites.data;
     let chapterName = `第 ${nextProps.chapter} 章`;
-  
+
     if (nextProps.book==this.state.book && nextProps.chapter==this.state.chapter && nextProps.scrollToIndex==this.state.scrollToIndex) {
       // back
       this.setState({
         favorites: favorites
       });
     } else {
-      // reset to force re-render FlatList to get scroll height 
+      // reset to force re-render FlatList to get scroll height
       this.setState({
         listData: []
       },()=>{
-        // console.log("chapter nextProps.scrollToIndex: " + JSON.stringify(nextProps.scrollToIndex));
         this.setState({
-          bookIndex: nextProps.bookIndex, 
-          book: nextProps.book, 
+          bookIndex: nextProps.bookIndex,
+          book: nextProps.book,
           chapter:nextProps.chapter,
           favorites: favorites,
-          listData: bible.data[nextProps.book][chapterName], 
+          listData: bible.data[nextProps.book][chapterName],
           scrollToIndex: nextProps.scrollToIndex
         }, ()=>{
           setTimeout(()=>{
@@ -159,7 +138,7 @@ class Chapters extends PureComponent {
     let {book, chapter} = this.props;
     let title = `${book} 第${chapter}章`;
     return (
-      <NavigationBar 
+      <NavigationBar
         back={true}
         title={title}
         titleStyle = {styles.titleStyle}
@@ -177,50 +156,21 @@ class Chapters extends PureComponent {
     return (
       <View style={styles.navRightCompBlock}>
         {
-          (bookIndex==0 && chapter==1)? null 
+          (bookIndex==0 && chapter==1)? null
           : (
           <TouchableOpacity style={styles.navRightBtn} onPress={()=>{this.onPressPrevChapter();}}>
-            {/*<Text style={styles.navRightBtnTxt}>上一章</Text>*/}
             <Icon style={{marginRight:0}} name="arrow-left" size={20} color="#fff"/>
           </TouchableOpacity>
           )
         }
         {
-          (bookIndex==lastBookIndex && chapter==lastChapter)? null 
+          (bookIndex==lastBookIndex && chapter==lastChapter)? null
           : (
             <TouchableOpacity style={styles.navRightBtn} onPress={()=>{this.onPressNextChapter();}}>
-              {/*<Text style={styles.navRightBtnTxt}>下一章</Text>*/}
               <Icon style={{marginRight:0}} name="arrow-right" size={20} color="#fff"/>
             </TouchableOpacity>
           )
         }
-        {/*
-        <TouchableOpacity style={styles.navRightBtn} onPress = {()=>{
-          scrollToOffsetY=0;
-          try{
-            Actions.popTo('pickbookchapter');
-            setTimeout(()=>{
-              Actions.refresh({from: 'chapters', selectedBookIndex: bookIndex, selectedChapter: chapter, selectedSection: scrollToIndex});
-            }, 100);
-          } catch(err){
-            Actions.pickbookchapter({from: 'chapters', selectedBookIndex: bookIndex, selectedChapter: chapter, selectedSection: scrollToIndex});
-          }
-        }}>
-          <Icon style={{marginRight:0}} name="launch" size={15} color="#fff"/>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navRightBtn} onPress = {()=>{
-          scrollToOffsetY=0;
-          try{
-            Actions.popTo('search');
-            setTimeout(()=>{
-              Actions.refresh({from: 'chapters', searchBookIndex: bookIndex});
-            }, 100);
-          } catch(err){
-            Actions.search({from: 'chapters', searchBookIndex: bookIndex});
-          }
-        }}>
-          <Icon style={{marginRight:0}} name="magnify" size={15} color="#fff"/>
-      </TouchableOpacity>*/}
       </View>
     );
   }
@@ -279,12 +229,11 @@ class Chapters extends PureComponent {
       book: book,
       chapterName: chapterName,
       index: index,
-      content: content 
+      content: content
     };
     this.setState({selected: selected});
-    // console.log("select: " + book + ':' + chapterName + ':' + index);
   }
-  
+
   addToFavorites(){
     let { selected } = this.state;
     let { addFavorite } = this.props;
@@ -298,7 +247,6 @@ class Chapters extends PureComponent {
       let selectedDetails = selected[Object.keys(selected)[0]];
       content = `${selectedDetails.book} ${selectedDetails.chapterName} 第 ${selectedDetails.index+1} 節 : ${selectedDetails.content}`;
     }
-    // console.log('copy content: ' + content);
     Clipboard.setString(content);
   }
 
@@ -309,21 +257,20 @@ class Chapters extends PureComponent {
       let selectedDetails = selected[Object.keys(selected)[0]];
       let bookChapter = selectedDetails.chapterName.replace(/第|章| /g, '');
       content = `${selectedDetails.book} ${selectedDetails.chapterName} 第 ${selectedDetails.index+1} 節 : ${selectedDetails.content}`;
-      
+
       let options = {
         title: '聖經-經節分享',
         message: content,
-        // url: 'http://god.is-very-good.org/BibleMobile.php?BookName='+encodeURIComponent(selectedDetails.book)+'&BookChapter='+bookChapter,
         subject: '聖經-經節分享'
       };
-  
+
       Share.open(options)
-      .then((res) => { 
-        console.log(res);
+      .then((res) => {
         this.closeModal();
       })
-      .catch((err) => { 
-        console.log(err); 
+      .catch((err) => {
+        // For debugging
+        console.log(err);
       });
     }
   }
@@ -335,7 +282,7 @@ class Chapters extends PureComponent {
   }
 
   renderList({item, index}) {
-    let { booksData, bibleData, bookIndex, book, chapter, favorites, selected, scrollToIndex } = this.state;
+    let { bookIndex, book, chapter, favorites, scrollToIndex } = this.state;
     let chapterName = `第 ${chapter} 章`;
 
     return (
@@ -346,8 +293,8 @@ class Chapters extends PureComponent {
           if(scrollToIndex && scrollToIndex > index) {
             scrollToOffsetY = scrollToOffsetY + layout.height + listSeparatorHeight;
           }
-        }} 
-        key={`itemId_${item.id}`} 
+        }}
+        key={`itemId_${item.id}`}
         style={styles.listItemBlock} onPress={()=>{this.onPressSectionItem(item.id, bookIndex, book, chapterName, index, item.content)}}
       >
         <View style={styles.sectionNum}>
@@ -357,7 +304,7 @@ class Chapters extends PureComponent {
               <Icon style={{margin:0}} name="heart" size={15} color="#c82828"/>
             ):null
           }
-        </View>  
+        </View>
         <View style={[styles.sectionContent]}>
           <Text style={styles.sectionText}>{item.content}</Text>
         </View>
@@ -371,10 +318,9 @@ class Chapters extends PureComponent {
   render() {
     let { booksData, bibleData, listData, bookIndex, book, chapter, favorites, selected, renderPlaceholderOnly, scrollToIndex } = this.state;
     let selectedDetails = (selected)? selected[Object.keys(selected)[0]]: null;
-    let chapterName = `第 ${chapter} 章`;
-    
-    if (renderPlaceholderOnly || 
-        booksData.length==0 || 
+
+    if (renderPlaceholderOnly ||
+        booksData.length==0 ||
         bibleData==null ||
         listData==null) {
       return (
@@ -399,7 +345,6 @@ class Chapters extends PureComponent {
           removeClippedSubviews={false}
           keyExtractor={(item, index) => item.id}
         />
-        
         <View style={styles.stickyFooterBlock}>
           <View style={styles.stickyFooterButton}>
             <TouchableOpacity style={styles.stickyFooterButtonBlock} onPress = {()=>{
@@ -495,14 +440,14 @@ const styles = StyleSheet.create({
   },
   titleStyle: {
     textAlign:'right',
-    color: '#000', 
+    color: '#000',
     fontSize: 15,
     marginLeft: 0,
     width: '100%'
   },
   listItemBlock: {
-    width:'100%', 
-    flexDirection: 'row', 
+    width:'100%',
+    flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
     borderBottomWidth: 0,
@@ -515,7 +460,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     flex: 0.1,
-    // paddingHorizontal: 5,
     paddingVertical: 3,
   },
   sectionContent: {
@@ -547,37 +491,37 @@ const styles = StyleSheet.create({
     fontSize: 17
   },
   stickyFooterBlock: {
-    backgroundColor: '#3676B8', 
-    position: "absolute", 
+    backgroundColor: '#3676B8',
+    position: "absolute",
     left: 0,
-    bottom: 0, 
-    flex: 1, 
-    paddingHorizontal: 0, 
-    paddingVertical: 0, 
-    justifyContent: "center", 
+    bottom: 0,
+    flex: 1,
+    paddingHorizontal: 0,
+    paddingVertical: 0,
+    justifyContent: "center",
     alignItems: "center",
     height: stickyBtnHeight,
     width: "100%",
     opacity: 1,
   },
   stickyFooterButtonBlock: {
-    justifyContent: "center", 
+    justifyContent: "center",
     alignItems: "center",
     width: '100%',
     height: '100%',
     flex: 0.5
   },
   stickyFooterButton: {
-    height: '100%', 
-    width: '100%', 
-    justifyContent: 'center', 
+    height: '100%',
+    width: '100%',
+    justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
     paddingHorizontal: 25
   },
   stickyFooterButtonTxt: {
-    color: "#FFF", 
-    fontSize: 12, 
+    color: "#FFF",
+    fontSize: 12,
     textAlign:'center'
   },
   menuItemIcon: {
@@ -586,7 +530,7 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     margin: 0,
-    justifyContent: 'center', 
+    justifyContent: 'center',
     alignItems: 'center'
   },
   innerContainer: {
@@ -595,14 +539,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: 20,
     borderColor: "rgba(0, 0, 0, 0.1)",
-    justifyContent: 'center', 
+    justifyContent: 'center',
     alignItems: 'center'
   },
   closeBtn: {
     position: 'absolute',
     top: 20,
     right: 20,
-    justifyContent: "center", 
+    justifyContent: "center",
     alignItems: "center",
   },
   closeIcon: {
@@ -625,7 +569,7 @@ const styles = StyleSheet.create({
     width: 200,
     height: 50,
     backgroundColor: '#3676B8',
-    justifyContent: 'center', 
+    justifyContent: 'center',
     alignItems: 'center',
     padding: 10
   },
@@ -670,7 +614,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
   return {
     books: state.books,
-    bible: state.bible, 
+    bible: state.bible,
     favorites: state.favorites
   };
 };

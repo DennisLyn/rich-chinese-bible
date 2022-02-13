@@ -1,14 +1,11 @@
 import React, { Component } from 'react';
 import {
-  Platform,
   StyleSheet,
-  Text,
   View,
   BackHandler
 } from 'react-native';
 import { connect } from "react-redux";
 import Router from "./Router";
-import { createStore, applyMiddleware } from 'redux';
 import { updateUnmountState } from './actions/RouterActions';
 import ScreenBlocker from "./components/ScreenBlocker";
 import { Actions } from "react-native-router-flux";
@@ -27,7 +24,7 @@ class App extends Component {
 
   componentDidMount() {
     SplashScreen.hide();
-    BackHandler.addEventListener('hardwareBackPress', this.backAndroid); 
+    BackHandler.addEventListener('hardwareBackPress', this.backAndroid);
   }
 
   componentWillUnmount() {
@@ -48,7 +45,7 @@ class App extends Component {
   }
 
   backAndroid () {
-    Actions.pop(); 
+    Actions.pop();
     return true;
   }
 
@@ -67,7 +64,7 @@ class App extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    width:'100%', 
+    width:'100%',
     height:'100%'
   }
 });
@@ -89,4 +86,3 @@ export default connect(
     mapStateToProps,
     mapDispatchToProps
 )(App);
-

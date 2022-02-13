@@ -1,15 +1,12 @@
-import React, { Component, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { 
-  ListView, 
-  View, 
-  Text, 
-  TouchableHighlight, 
-  StyleSheet, 
-  Image,
+import {
+  ListView,
+  View,
+  Text,
+  StyleSheet,
   Dimensions,
   InteractionManager,
-  FlatList, // performace is bad for large data like 1000+
   TextInput,
   TouchableOpacity,
   ScrollView,
@@ -19,11 +16,10 @@ import {
   Platform
 } from 'react-native';
 import NavigationBar, { NavigationBarStyle } from './NavigationBar';
-import { 
-  searchByKeyword, 
-  fetchBooksData, 
-  fetchFavoritesData, 
-  removeFavorite, 
+import {
+  searchByKeyword,
+  fetchFavoritesData,
+  removeFavorite,
   addFavorite,
   fetchSearchHistoryData,
   addSearchHistory,
@@ -31,24 +27,16 @@ import {
 } from '../actions';
 import { Actions } from 'react-native-router-flux';
 import CustomSpinner from './common/CustomSpinner'
-import {Input} from './common/Input';
 import Modal from "react-native-modal";
-import Share, {ShareSheet, Button} from 'react-native-share';
-// import SearchBar from 'react-native-searchbar'
-// import Icon from 'react-native-vector-icons/FontAwesome';
+import Share from 'react-native-share';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import ProgressiveImage from "./common/ProgressiveImage";
 import Highlighter from 'react-native-highlight-words';
 
-const { width, height } = Dimensions.get('window');
-const sectionMenu = require("../img/menu-vertical.png");
+const { width } = Dimensions.get('window');
 const headerHeight = NavigationBarStyle.height;
-const closeIcon = require("../img/icon-close.png");
-const heartIcon = require("../img/heartIcon.png");
 const listPageRecodeNum = 10;
-const maxSearchHistoryNum = 50;
 
-class Search extends PureComponent { 
+class Search extends PureComponent {
   constructor(props){
     super(props);
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
@@ -67,7 +55,6 @@ class Search extends PureComponent {
       selected: null,
       favorites: null,
       fromPage: this.props.from,
-      // searchBookIndex: this.props.searchBookIndex,
       searchBookIndex: null,
       booksData: this.props.books.data
     };
@@ -95,7 +82,7 @@ class Search extends PureComponent {
     let { fetchSearchHistoryData } = this.props;
     fetchSearchHistoryData();
   }
-  
+
   componentDidMount() {
     let {from} = this.props;
     let navBar = this.renderNavBarWithBack;
@@ -112,9 +99,9 @@ class Search extends PureComponent {
 
     let { fetchFavoritesData, searchBookIndex } = this.props;
     let { listDataSource } = this.state;
-    
+
     fetchFavoritesData();
-    
+
     InteractionManager.runAfterInteractions(() => {
       this.setState({
         searchBookIndex: searchBookIndex,
@@ -131,7 +118,7 @@ class Search extends PureComponent {
     return (
       <NavigationBar
         menu={true}
-        back={true} 
+        back={true}
         title={`搜尋`}
       />
     );
@@ -153,21 +140,16 @@ class Search extends PureComponent {
     this.searchHistory = nextProps.search.searchHistory;
     let searchBookIndex = nextProps.searchBookIndex;
     let { keyword } = this.state;
-    
+
     if(searchData.length!==0 && this.state.searchData.length==0) {
       this.setState({searchData: searchData});
     }
-    
+
     if(this.props.searchBookIndex!= searchBookIndex) {
       this.deleteKeyWord();
-      this.setState({searchBookIndex: searchBookIndex}, ()=>{
-        if(keyword.trim()){
-          
-          // this.onSubmitKeyword();
-        }
-      });
+      this.setState({searchBookIndex: searchBookIndex});
     }
-    
+
     let favorites = nextProps.favorites.data;
     this.setState({favorites: favorites});
   }
@@ -207,7 +189,6 @@ class Search extends PureComponent {
       let selectedDetails = selected[Object.keys(selected)[0]];
       content = `${selectedDetails.book} ${selectedDetails.chapterName} 第 ${selectedDetails.index+1} 節 : ${selectedDetails.content}`;
     }
-    // console.log('copy content: ' + content);
     Clipboard.setString(content);
   }
 
@@ -218,20 +199,20 @@ class Search extends PureComponent {
       let selectedDetails = selected[Object.keys(selected)[0]];
       let bookChapter = selectedDetails.chapterName.replace(/第|章| /g, '');
       content = `${selectedDetails.book} ${selectedDetails.chapterName} 第 ${selectedDetails.index+1} 節 : ${selectedDetails.content}`;
-      
+
       let options = {
         title: '聖經-經節分享',
         message: content,
         subject: '聖經-經節分享'
       };
-  
+
       Share.open(options)
-      .then((res) => { 
-        console.log(res);
+      .then((res) => {
         this.closeModal();
       })
-      .catch((err) => { 
-        console.log(err); 
+      .catch((err) => {
+        // For debugging
+        console.log(err);
       });
     }
   }
@@ -239,45 +220,33 @@ class Search extends PureComponent {
   goToChapter() {
     let { selected, fromPage } = this.state;
     let selectedDetails = selected[Object.keys(selected)[0]];
-    // console.log('goToChapter selectedDetails: ' + JSON.stringify(selectedDetails));
-   
+
     if(fromPage==='chapters') {
       Actions.pop({refresh:{
-        bookIndex: selectedDetails.bookIndex, 
-        book: selectedDetails.book, 
+        bookIndex: selectedDetails.bookIndex,
+        book: selectedDetails.book,
         chapter: selectedDetails.chapterName,
         scrollToIndex: selectedDetails.index
       }})
     } else {
-
       try{
         Actions.popTo('chapters');
         setTimeout(()=>{
           Actions.refresh({
-            bookIndex: selectedDetails.bookIndex, 
-            book: selectedDetails.book, 
+            bookIndex: selectedDetails.bookIndex,
+            book: selectedDetails.book,
             chapter: selectedDetails.chapterName,
             scrollToIndex: selectedDetails.index,
-            // type: 'replace'
           });
         },100);
       } catch(err) {
         Actions.chapters({
-          bookIndex: selectedDetails.bookIndex, 
-          book: selectedDetails.book, 
+          bookIndex: selectedDetails.bookIndex,
+          book: selectedDetails.book,
           chapter: selectedDetails.chapterName,
           scrollToIndex: selectedDetails.index,
-          // type: 'replace'
         });
       }
-
-      /*Actions.chapters({
-        bookIndex: selectedDetails.bookIndex, 
-        book: selectedDetails.book, 
-        chapter: selectedDetails.chapterName,
-        scrollToIndex: selectedDetails.index,
-        // type: 'replace'
-      })*/
     }
   }
 
@@ -291,8 +260,7 @@ class Search extends PureComponent {
       if(book.name==bookName) {
         bookIndex=index;
       }
-    });    
-    // console.log('book: ' + bookName + 'bookIndex: ' + bookIndex + 'books length: ' + books.data.length);
+    });
     this.openModal();
     if(bookIndex!=-1) {
       let selected = {};
@@ -301,11 +269,9 @@ class Search extends PureComponent {
         book: bookName,
         chapterName: chapterName,
         index: index,
-        content: content 
+        content: content
       };
-      this.setState({selected: selected}, ()=>{
-        // console.log("select: " + JSON.stringify(this.state.selected));
-      });
+      this.setState({selected: selected});
     }
   }
 
@@ -317,11 +283,11 @@ class Search extends PureComponent {
     if(keyword.trim()) {
       //Reset first
       this.setState({
-        showLoading: true, 
+        showLoading: true,
         message: null,
         searchResult: [],
         listData: [],
-        loadPageIndex: null, 
+        loadPageIndex: null,
         listDataSource: listDataSource.cloneWithRows([])
       }, ()=>{
         searchByKeyword(keyword, searchBook, (searchResult)=>{
@@ -332,10 +298,7 @@ class Search extends PureComponent {
             message = '搜尋結果: ' + searchResult.length + ' 經節'
             this.addRecords(0, searchResult);
           }
-          // console.log('searchResult: ' + JSON.stringify(searchResult));
           this.setState({ searchResult: searchResult, message: message }, ()=>{
-            // console.log('search this.state.searchResult: ' + JSON.stringify(this.state.searchResult));
-            // this.addRecords(0, searchResult);
             this.setState({showLoading: false});
           });
         });
@@ -358,7 +321,7 @@ class Search extends PureComponent {
   }
 
   onScrollHandler() {
-    let { searchResult, loadPageIndex } = this.state; 
+    let { searchResult, loadPageIndex } = this.state;
     if(searchResult.length>0) {
       let totalPages = ((searchResult.length/listPageRecodeNum)> Math.floor(searchResult.length/listPageRecodeNum))? (Math.floor(searchResult.length/listPageRecodeNum) + 1): Math.floor(searchResult.length/listPageRecodeNum);     
       if(loadPageIndex<(totalPages-1)) {
@@ -370,12 +333,10 @@ class Search extends PureComponent {
   addRecords(pageIndex, searchData) {
     let { listData, listDataSource, loadPageIndex } = this.state;
     if(searchData.length>0 && pageIndex!=loadPageIndex) {
-      let totalPages = ((searchData.length/listPageRecodeNum)> Math.floor(searchData.length/listPageRecodeNum))? (Math.floor(searchData.length/listPageRecodeNum) + 1): Math.floor(searchData.length/listPageRecodeNum);     
-      // console.log('totalPages: ' + totalPages);
-      // console.log('pageIndex: loadPageIndex: ' + pageIndex + ' : ' + loadPageIndex);
+      let totalPages = ((searchData.length/listPageRecodeNum)> Math.floor(searchData.length/listPageRecodeNum))? (Math.floor(searchData.length/listPageRecodeNum) + 1): Math.floor(searchData.length/listPageRecodeNum);
       let rStartIndex, rEndIndex;
       let newData=null;
-    
+
       if (pageIndex< (totalPages-1)) {
         rStartIndex = pageIndex * listPageRecodeNum;
         rEndIndex = rStartIndex + listPageRecodeNum;
@@ -384,19 +345,17 @@ class Search extends PureComponent {
         rStartIndex = pageIndex * listPageRecodeNum;
         newData = searchData.slice(rStartIndex);
       }
-      
+
       let newListData = listData.concat(newData);
 
       this.setState({
         listDataSource: listDataSource.cloneWithRows(newListData),
         listData: newListData,
         loadPageIndex : pageIndex
-      }, ()=>{
-        // console.log('listData length: ' + this.state.listData.length);
       });
     }
   }
-  
+
   onPressSearchHistoryKeyword(keyword) {
     this.setState({
       keyword: keyword
@@ -418,7 +377,6 @@ class Search extends PureComponent {
 
   renderListHeader() {
     let { message, searchBookIndex, booksData, searchResult } = this.state;
-    let searchBook = (searchBookIndex!=null)? booksData[searchBookIndex].name: null;
     let bookPickerList = [];
     bookPickerList.push(<Picker.Item label={`全書`} value={null} key={`bookPickItem_${null}`}/>);
     booksData.map((item, index) => {
@@ -533,7 +491,6 @@ class Search extends PureComponent {
           <View style={[styles.sectionContent]}>
             <View style={styles.sectionHeader}>
               <View style={styles.sectionTitle}>
-                {/*<Text style={[styles.sectionHeaderTxt, styles.sectionText]}>{Number(rowId)+1}.</Text>*/}
                 <Text style={[styles.sectionHeaderTxt, styles.sectionText]}>{item.book} {item.chapter.replace(/第|章| /g, '')}:{item.section.replace(/第|節| /g, '')}</Text>
                 {
                   (favorites && favorites.hasOwnProperty(item.id))? (
@@ -563,7 +520,7 @@ class Search extends PureComponent {
   }
 
   render() {
-    let { searchData, renderPlaceholderOnly, showLoading, searchResult, listData, listDataSource,message, selected, favorites } = this.state;
+    let { renderPlaceholderOnly, showLoading, listDataSource, selected, favorites } = this.state;
     let selectedDetails = (selected)? selected[Object.keys(selected)[0]]: null;
 
     if (renderPlaceholderOnly || this.props.search.isFetching || showLoading) {
@@ -780,7 +737,7 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     margin: 0,
-    justifyContent: 'center', 
+    justifyContent: 'center',
     alignItems: 'center'
   },
   innerContainer: {
@@ -789,14 +746,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: 20,
     borderColor: "rgba(0, 0, 0, 0.1)",
-    justifyContent: 'center', 
+    justifyContent: 'center',
     alignItems: 'center'
   },
   closeBtn: {
     position: 'absolute',
     top: 20,
     right: 20,
-    justifyContent: "center", 
+    justifyContent: "center",
     alignItems: "center",
   },
   closeIcon: {
@@ -819,7 +776,7 @@ const styles = StyleSheet.create({
     width: 200,
     height: 50,
     backgroundColor: '#3676B8',
-    justifyContent: 'center', 
+    justifyContent: 'center',
     alignItems: 'center',
     padding: 10
   },
@@ -904,7 +861,7 @@ const mapStateToProps = (state) => {
   return {
     search: state.search,
     books: state.books,
-    bible: state.bible, 
+    bible: state.bible,
     favorites: state.favorites
   };
 };

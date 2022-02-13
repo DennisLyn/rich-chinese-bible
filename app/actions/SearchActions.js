@@ -1,13 +1,13 @@
 import * as TYPES from "./types";
-import {store} from "../AppContainer";
-import {AsyncStorage} from 'react-native';
+import { store } from "../AppContainer";
+import { AsyncStorage } from 'react-native';
 const searchHistoryAsyncKey = 'cbible_searchHistory';
 
 export function getSearchData() {
-    return {
-      type: TYPES.FETCHING_SEARCH_DATA,
-      payload: null
-    };
+  return {
+    type: TYPES.FETCHING_SEARCH_DATA,
+    payload: null
+  };
 }
 
 export function getSearchDataSuccess(data) {
@@ -42,7 +42,6 @@ export function fetchSearchData() {
   return (dispatch)=>{
     dispatch(getSearchData());
     let searchData = require( '../data/bible-array.json');
-    // console.log("search data " + JSON.stringify(searchData));
     dispatch(getSearchDataSuccess(searchData));
   }
 }
@@ -50,9 +49,6 @@ export function fetchSearchData() {
 export function searchByKeyword(keyword, book, cb) {
   return (dispatch)=> {
     let data = store.getState().search.data;
-    // console.log('Search Data: ' + JSON.stringify(data));
-    console.log('book: ' + book);
-    
     if(Array.isArray(data) && keyword.length!=0){
       let result = data.filter((obj)=>{
         if (book) {
@@ -62,7 +58,6 @@ export function searchByKeyword(keyword, book, cb) {
         }
       });
       cb(result);
-
     } else {
       cb([]);
     }
@@ -81,16 +76,14 @@ export function fetchSearchHistoryData() {
        *  dataString - data
        */
       let cBibleSearchHistory = await AsyncStorage.getItem(searchHistoryAsyncKey);
-      console.log('Get cBibleSearchHistory from AsyncStorage:' + cBibleSearchHistory);
-      
       let searchHistoryJsonData = JSON.parse(cBibleSearchHistory);
+
       if(Array.isArray(searchHistoryJsonData)) {
         dispatch(getSearchHistorySuccess(searchHistoryJsonData));
       } else {
         dispatch(getSearchHistorySuccess([]));
       }
     } catch(err){
-      // console.log('Error: ' + err);
       dispatch(getSearchHistorySuccess([]));
     }
   }
@@ -124,19 +117,19 @@ export function removeSearchHistory(keyword) {
   return (dispatch)=>{
     try {
       let searchHistory = store.getState().search.searchHistory;
-      
       let oldKeyIndex = searchHistory.indexOf(keyword);
+
       if(oldKeyIndex!=-1) {
         searchHistory.splice(oldKeyIndex, 1);
       }
 
       AsyncStorage.setItem(searchHistoryAsyncKey, JSON.stringify(searchHistory), () => {
         AsyncStorage.getItem(searchHistoryAsyncKey, (err, result) => {
-          console.log('removeSearchHistory (result):' + result);
           dispatch(getSearchHistorySuccess(JSON.parse(result)));
         });
       });
     } catch(err){
+      // For debugging
       console.log('addSearchHistory (err):' + err);
     }
   }

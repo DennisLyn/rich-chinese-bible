@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
 var Spinner = require('react-native-spinkit');
 
-const defaultType = 'Wave'; // 'CircleFlip', 'Bounce', 'Wave', 'WanderingCubes', 'Pulse', 'ChasingDots', 'ThreeBounce', 'Circle', '9CubeGrid', 'FadingCircle', 'FadingCircleAlt'
+// 'CircleFlip', 'Bounce', 'Wave', 'WanderingCubes', 'Pulse', 'ChasingDots', 'ThreeBounce', 'Circle', '9CubeGrid', 'FadingCircle', 'FadingCircleAlt'
+const defaultType = 'Wave';
 const defaultColor = '#3676B8';
 const defaultSize = 50;
 
@@ -14,10 +15,10 @@ class CustomSpinner extends Component {
     const { style, size, type, color} = this.props;
     return (
       <View style={styles.loadingContainer}>
-        <Spinner 
+        <Spinner
           style={style || styles.spinner}
-          isVisible={true} 
-          size={size || defaultSize} 
+          isVisible={true}
+          size={size || defaultSize}
           type={type|| defaultType}
           color={color || defaultColor}
         />
@@ -28,16 +29,16 @@ class CustomSpinner extends Component {
 
 const styles = StyleSheet.create({
   spinner: {
-    alignItems: "center", 
-    justifyContent: "center", 
+    alignItems: "center",
+    justifyContent: "center",
   },
   loadingContainer: {
-    alignItems: "center", 
-    justifyContent: "center", 
-    position: 'absolute', 
-    top: 0, 
-    left: 0, 
-    width: '100%', 
+    alignItems: "center",
+    justifyContent: "center",
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
     height:'100%'
   }
 });
